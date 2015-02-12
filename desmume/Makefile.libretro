@@ -22,7 +22,34 @@ ifeq ($(platform), unix)
 	fpic := -fPIC
 	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T
 	DESMUME_JIT = 1
-
+# Raspberry Pi
+else ifneq ($(platform), rpi)
+	TARGET := $(TARGET_NAME)_libretro.so
+	LDFLAGS += -shared -Wl,--version-script=$(LIBRETRO_DIR)/link.T
+	#has to be set to work 	https://github.com/libretro/desmume/issues/20
+	CC=clang
+	CXX=clang++
+	fpic = -fPIC
+	GLES = 1
+	GL_LIB := -L/opt/vc/lib -lGLESv2
+	INCFLAGS += -I/opt/vc/include
+	CPUFLAGS += -DNO_ASM
+	PLATFORM_EXT := unix
+	WITH_DYNAREC=arm
+else ifneq ($(platform), rpi2)
+	# right now rpi and rpi2 are identical but I would like to keep both so that you can set it as a default platform on other cores that actually have differences
+	TARGET := $(TARGET_NAME)_libretro.so
+	LDFLAGS += -shared -Wl,--version-script=$(LIBRETRO_DIR)/link.T
+	#has to be set to work 	https://github.com/libretro/desmume/issues/20
+	CC=clang
+	CXX=clang++
+	fpic = -fPIC
+	GLES = 1
+	GL_LIB := -L/opt/vc/lib -lGLESv2
+	INCFLAGS += -I/opt/vc/include
+	CPUFLAGS += -DNO_ASM
+	PLATFORM_EXT := unix
+	WITH_DYNAREC=arm
 # OS X
 else ifeq ($(platform), osx)
 	TARGET := $(TARGET_NAME)_libretro.dylib
@@ -147,11 +174,12 @@ else ifneq (,$(findstring armv,$(platform)))
 	TARGET := $(TARGET_NAME)_libretro.so
 	SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T
 	fpic := -fPIC
-	ifneq (,$(findstring clang,$(platform)))
+#	ifneq (,$(findstring clang,$(platform)))
+# Since desmume doesn't work right now without using clang I would make this a default until the bug is resolved
 		CC = clang
 		CXX = clang++
 		AR = clang
-	endif
+#	endif
 	ifneq (,$(findstring cortexa5,$(platform)))
 		CXXFLAGS += -marm -mcpu=cortex-a5
 	else ifneq (,$(findstring cortexa8,$(platform)))
