@@ -37,6 +37,7 @@ else ifneq ($(platform), rpi)
 	INCFLAGS += -I/opt/vc/include
 	CPUFLAGS += -DNO_ASM
 	PLATFORM_EXT := unix
+	DESMUME_JIT_ARM = 1
 	WITH_DYNAREC=arm
 else ifneq ($(platform), rpi2)
 	# right now rpi and rpi2 are identical but I would like to keep both so that you can set it as a default platform on other cores that actually have differences
@@ -51,6 +52,7 @@ else ifneq ($(platform), rpi2)
 	INCFLAGS += -I/opt/vc/include
 	CPUFLAGS += -DNO_ASM
 	PLATFORM_EXT := unix
+	DESMUME_JIT_ARM = 1
 	WITH_DYNAREC=arm
 # OS X
 else ifeq ($(platform), osx)
